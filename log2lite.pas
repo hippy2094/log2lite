@@ -28,6 +28,7 @@ program log2lite;
 uses cmem, Classes, SysUtils, DateUtils, sqldb, db, sqlite3ds, sqlite3conn, BRRE, BRREUnicode;
 
 type
+  TArray = array of String;
   PStatsLine = ^TStatsLine;
   TStatsLine = Packed Record
     Ip: String;
@@ -72,9 +73,61 @@ begin
   RegExp.Free;
 end;*)
 
+function explode(cDelimiter,  sValue : string; iCount : integer) : TArray;
+var
+  s : string; 
+  i,p : integer;
+begin
+  s := sValue;
+  i := 0;
+  while length(s) > 0 do
+  begin
+    inc(i);
+    SetLength(result, i);
+    p := pos(cDelimiter,s);
+    if ( p > 0 ) and ( ( i < iCount ) OR ( iCount = 0) ) then
+    begin
+      result[i - 1] := copy(s,0,p-1);
+      s := copy(s,p + length(cDelimiter),length(s));
+    end else
+    begin
+      result[i - 1] := s;
+      s :=  '';
+    end;
+  end;
+end;
+
+// Rather nasty
+function MonthToNum(m: String): String;
+var
+  Months: Array[1..12] of String;
+  i,j: Integer;
+  s: String;
+begin
+  Months[1] := 'Jan';
+  Months[2] := 'Feb';
+  Months[3] := 'Mar';
+  Months[4] := 'Apr';
+  Months[5] := 'May';
+  Months[6] := 'Jun';
+  Months[7] := 'Jul';
+  Months[8] := 'Aug';
+  Months[9] := 'Sep';
+  Months[10] := 'Oct';
+  Months[11] := 'Nov';
+  Months[12] := 'Dec';
+  for i := 1 to 12 do
+  begin
+    if m = Months[i] then j := i;
+  end;
+  if j < 10 then s := '0' + IntToStr(j)
+  else s := IntToStr(j);
+  Result := s;
+end;
+
 function CalculateRuntime(s,e: TDateTime): String;
 var
-  ss: String;  
+  ss: String;
 begin
   Result := '';
   DateTimeToString(ss,'hh',(e-s));
@@ -82,7 +135,7 @@ begin
   DateTimeToString(ss,'nn',(e-s));
   Result := Result + ss + 'm ';
   DateTimeToString(ss,'ss',(e-s));
-  Result := Result + ss + 's';    
+  Result := Result + ss + 's';
 end;
 
 // Read, then write
@@ -93,7 +146,6 @@ var
   trans: TSQLTransaction;
   query: TSQLQuery;
   n: LongInt;
-//  s: TStatsLine;
   f: TextFile;
   lineIn: String;
   i: integer;
@@ -101,6 +153,8 @@ var
   pa: PStatsLine;
   RegExp: TBRRERegExp;
   MatchAll: TBRRERegExpStrings;
+  dateParts: TArray;
+  dateStr: String;
 begin
   // TODO: Optimise this some more
   sItems := TList.Create;
@@ -135,7 +189,10 @@ begin
     if Length(MatchAll) = 13 then
     begin
       pa^.Ip := MatchAll[0];
-      pa^.DateTime := MatchAll[3] + ' ' + MatchAll[4] + ' ' + MatchAll[5];
+      //pa^.DateTime := MatchAll[3] + ' ' + MatchAll[4] + ' ' + MatchAll[5];
+      dateParts := explode('/',MatchAll[3],0);
+      dateStr := dateParts[2] + '-' + MonthToNum(dateParts[1]) + '-' + dateParts[0] + ' ' + MatchAll[4];
+      pa^.DateTime := dateStr;
       pa^.Method := MatchAll[6];
       pa^.ReqFile := MatchAll[7];
       try

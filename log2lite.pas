@@ -25,7 +25,7 @@ program log2lite;
 
 {$mode delphi}
 
-uses cmem, Classes, SysUtils, DateUtils, sqldb, db, sqlite3ds, sqlite3conn, BRRE, BRREUnicode;
+uses Classes, SysUtils, DateUtils, sqldb, db, sqlite3ds, sqlite3conn, BRRE, BRREUnicode;
 
 type
   TArray = array of String;

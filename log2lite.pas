@@ -187,7 +187,7 @@ begin
 end;  
 
 // Read, write together
-procedure test1(logFile, dbPath: String);
+(*procedure test1(logFile, dbPath: String);
 var
   dbFile: String;
   db: TSQLite3Connection;
@@ -261,7 +261,7 @@ begin
   query.Free;
   trans.Free;
   db.Free;  
-end;
+end;*)
   
 begin  
   startTime := Now; 
@@ -273,7 +273,6 @@ begin
     exit;	    
   end;
   writeln('Processing ',ParamStr(1),'. Please wait');
-  //test1(ParamStr(1),'./');
   test2(ParamStr(1),'./');
   endTime := Now;
   writeln('runtime: ',CalculateRuntime(startTime,endTime));

@@ -107,7 +107,8 @@ begin
   RegExp := TBRRERegExp.Create(Expression);
   // Create Database File
   n := DateTimeToUnix(Now);
-  dbFile := 'dbcache-'+IntToStr(n)+'.db';
+  //dbFile := 'dbcache-'+IntToStr(n)+'.db';
+  dbFile := ExtractFileName(logFile) + '.db';
   db := TSQLite3Connection.Create(nil);
   trans := TSQLTransaction.Create(nil);
   query := TSQLQuery.Create(nil);

@@ -170,6 +170,7 @@ begin
   db.Password := '';
   db.HostName := 'localhost';
   db.Port := 3306;
+  db.DatabaseName := 'test';
   db.Open;
   // Open log file and process
   AssignFile(f,logFile);

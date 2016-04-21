@@ -25,7 +25,7 @@ program log2lite;
 
 {$mode delphi}
 
-uses Classes, SysUtils, DateUtils, sqldb, db, sqlite3ds, sqlite3conn, BRRE, BRREUnicode;
+uses Classes, SysUtils, DateUtils, sqldb, db, mysql51conn, BRRE, BRREUnicode;
 
 type
   TArray = array of String;
@@ -142,7 +142,7 @@ end;
 procedure test2(logFile, dbPath: String);
 var
   dbFile: String;
-  db: TSQLite3Connection;
+  db: TMySQL51Connection;
   trans: TSQLTransaction;
   query: TSQLQuery;
   n: LongInt;
@@ -160,10 +160,7 @@ begin
   sItems := TList.Create;
   RegExp := TBRRERegExp.Create(Expression);
   // Create Database File
-  n := DateTimeToUnix(Now);
-  //dbFile := 'dbcache-'+IntToStr(n)+'.db';
-  dbFile := ExtractFileName(logFile) + '.db';
-  db := TSQLite3Connection.Create(nil);
+  db := TMySQL51Connection.Create(nil);
   trans := TSQLTransaction.Create(nil);
   query := TSQLQuery.Create(nil);
   query.Database := db;
@@ -171,11 +168,9 @@ begin
   db.Transaction := trans;
   db.Username := '';
   db.Password := '';
-  db.DatabaseName := dbPath + dbFile;
+  db.HostName := 'localhost';
+  db.Port := 3306;
   db.Open;
-  trans.Active := true;
-  db.ExecuteDirect('CREATE TABLE "stats" ("ip" Char(18), "datetime" Char(128), "method" Char(4), "ReqFile" Char(512), "Code" Integer, "Filesize" Integer, "Referrer" Char(1024), "Useragent" Char(1024))');
-  trans.Commit;
   // Open log file and process
   AssignFile(f,logFile);
   Reset(f);

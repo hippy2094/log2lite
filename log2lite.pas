@@ -210,8 +210,8 @@ begin
   trans.Active := false;
   trans.Action := caCommit;
   trans.StartTransaction;
-  query.InsertSQL.Add('INSERT INTO "stats" VALUES (:ip,:datetime,:method,:ReqFile,:Code,:Filesize,:Referrer,:Useragent)');
-  query.SQL.Text := 'SELECT * FROM "stats"';
+  query.InsertSQL.Add('INSERT INTO stats VALUES (:ip,:datetime,:method,:ReqFile,:Code,:Filesize,:Referrer,:Useragent)');
+  query.SQL.Text := 'SELECT * FROM stats';
   query.ReadOnly := false;
   query.Open;
   for i := 0 to sItems.Count -1 do

@@ -7,7 +7,7 @@ Uses BRRE https://github.com/BeRo1985/brre
 
 Build with:
 
-# fpc log2lite.pas
+# fpc -O3 -Xs log2lite.pas
 
 Simply run the binary with the log file as the only parameter
 

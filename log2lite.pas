@@ -64,16 +64,8 @@ begin
       pa^.DateTime := dateStr;
       pa^.Method := MatchAll[6];
       pa^.ReqFile := MatchAll[7];
-      try
-        pa^.Code := StrToInt(MatchAll[9]);
-      except
-        pa^.Code := 0;
-      end;
-      try
-        pa^.FileSize := StrToInt(MatchAll[10]);
-      except
-        pa^.FileSize := 0;
-      end;
+      pa^.Code := StrToIntDef(MatchAll[9],0);
+      pa^.FileSize := StrToIntDef(MatchAll[10],0);
       pa^.Referrer := MatchAll[11];
       pa^.UserAgent := MatchAll[12];
     end;
@@ -116,7 +108,7 @@ end;
 begin
   startTime := Now; 
   writeln('Apache log to sqlite3 database');
-  writeln('(c) 2016, 2017 Matthew Hipkin <http://www.matthewhipkin.co.uk>');
+  writeln('(c) 2016, 2017 Matthew Hipkin <https://www.matthewhipkin.co.uk>');
   writeln;
   if not FileExists(ParamStr(1)) then
   begin

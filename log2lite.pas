@@ -27,12 +27,15 @@ var
   MatchAll: TBRRERegExpStrings;
   dateParts: TArray;
   dateStr: String;
+  isappend: Boolean;
 begin
   // TODO: Optimise this some more
   sItems := TList.Create;
+  isappend := true;
   RegExp := TBRRERegExp.Create(Expression);
   // Create Database File
   dbFile := ExtractFileName(logFile) + '.db';
+  if not FileExists(dbFile) then isappend := false;
   db := TSQLite3Connection.Create(nil);
   trans := TSQLTransaction.Create(nil);
   query := TSQLQuery.Create(nil);
@@ -44,8 +47,11 @@ begin
   db.DatabaseName := dbPath + dbFile;
   db.Open;
   trans.Active := true;
-  db.ExecuteDirect('CREATE TABLE "stats" ("ip" Char(18), "datetime" Char(128), "method" Char(4), "ReqFile" Char(512), "Code" Integer, "Filesize" Integer, "Referrer" Char(1024), "Useragent" Char(1024))');
-  trans.Commit;
+  if not isappend then
+  begin
+    db.ExecuteDirect('CREATE TABLE "stats" ("ip" Char(18), "datetime" Char(128), "method" Char(4), "ReqFile" Char(512), "Code" Integer, "Filesize" Integer, "Referrer" Char(1024), "Useragent" Char(1024))');
+    trans.Commit;
+  end;
   // Open log file and process
   AssignFile(f,logFile);
   Reset(f);
